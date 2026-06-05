@@ -1,0 +1,28 @@
+# ==========================================
+# Finance Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "Finance Agent"
+  description: "Financial analysis, trading strategies, dan market data"
+  version: "0.1.0"
+
+# --- Exchange Settings ---
+exchange:
+  provider: "${CCXT_EXCHANGE}"
+  api_key: "${CCXT_API_KEY}"
+  secret: "${CCXT_SECRET}"
+  sandbox: true
+
+# --- Trading ---
+trading:
+  default_timeframe: "1h"
+  risk_per_trade: 0.02
+  max_open_positions: 5
+  use_decimal: true  # Wajib: gunakan Decimal untuk financial calculations
+
+# --- Data ---
+data:
+  market_data_path: "./data/raw/finance/market_data"
+  schema: "./data/schemas/finance/market_data.yaml"

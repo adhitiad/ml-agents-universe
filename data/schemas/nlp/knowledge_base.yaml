@@ -1,0 +1,8 @@
+﻿# Schema: knowledge_base.yaml
+# Domain: nlp
+# Version: 0.1.0
+
+table: nlp.knowledge_base
+version: "0.1.0"
+description: "Schema for knowledge_base.yaml in nlp domain"
+columns: []

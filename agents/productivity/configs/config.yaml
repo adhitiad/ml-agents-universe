@@ -1,0 +1,3 @@
+# Konfigurasi spesifik untuk domain productivity
+agent_name: 'productivity_agent'
+version: '0.1.0'

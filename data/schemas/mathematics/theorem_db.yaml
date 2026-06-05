@@ -1,0 +1,16 @@
+name: theorem_db
+version: 1.0.0
+domain: mathematics
+columns:
+- name: theorem_id
+  type: string
+  nullable: false
+- name: statement
+  type: string
+  nullable: false
+- name: proven
+  type: boolean
+  nullable: false
+- name: timestamp
+  type: datetime
+  nullable: true

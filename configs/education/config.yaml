@@ -1,0 +1,28 @@
+# ==========================================
+# Education Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "Education Agent"
+  description: "Adaptive learning dan educational AI tutoring"
+  version: "0.1.0"
+
+# --- Learning Model ---
+learning:
+  algorithm: "knowledge_tracing"
+  difficulty_levels: 5
+  mastery_threshold: 0.85
+  anonymize_students: true  # Wajib: anonymize student data
+
+# --- Curriculum ---
+curriculum:
+  subjects:
+    - mathematics
+    - science
+    - language
+
+# --- Data ---
+data:
+  students_path: "./data/raw/education/students"
+  schema: "./data/schemas/education/students.yaml"

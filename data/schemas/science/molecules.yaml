@@ -1,0 +1,8 @@
+﻿# Schema: molecules.yaml
+# Domain: science
+# Version: 0.1.0
+
+table: science.molecules
+version: "0.1.0"
+description: "Schema for molecules.yaml in science domain"
+columns: []

@@ -1,0 +1,16 @@
+name: corpus
+version: 1.0.0
+domain: nlp
+columns:
+- name: id
+  type: string
+  nullable: false
+- name: text
+  type: string
+  nullable: false
+- name: source
+  type: string
+  nullable: true
+- name: timestamp
+  type: datetime
+  nullable: true

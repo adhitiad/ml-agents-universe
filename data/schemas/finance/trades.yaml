@@ -1,0 +1,8 @@
+﻿# Schema: trades.yaml
+# Domain: finance
+# Version: 0.1.0
+
+table: finance.trades
+version: "0.1.0"
+description: "Schema for trades.yaml in finance domain"
+columns: []

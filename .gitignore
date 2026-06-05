@@ -1,0 +1,96 @@
+# ==========================================
+# ML Agents Universe — .gitignore
+# ==========================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.whl
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+ENV/
+
+# --- Environment Variables ---
+.env
+.env.local
+.env.production
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+
+# --- Type Checking ---
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# --- Linting ---
+.ruff_cache/
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Data (raw data tidak di-commit, schemas tetap) ---
+data/raw/
+data/processed/
+
+# --- Models (binary models terlalu besar) ---
+models/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+*.h5
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Docker ---
+.docker/
+
+# --- Secrets ---
+.secrets.baseline
+*.pem
+*.key
+
+# --- Misc ---
+*.bak
+*.tmp
+*.temp
+
+# --- Desktop App & Nuitka Build ---
+build_dist/
+nuitka-crash-report.xml
+data/desktop_config.json
+
+# --- LLM & Agent Cache ---
+llm_cache.db

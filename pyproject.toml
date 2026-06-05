@@ -1,0 +1,111 @@
+[build-system]
+requires = ["setuptools>=75.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "ml-agents-universe"
+version = "0.1.0"
+description = "Monorepo untuk multi-domain AI agent orchestration menggunakan LangGraph"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "ML Agents Universe Team" }]
+keywords = ["ai", "agents", "langgraph", "langchain", "multi-agent"]
+
+dependencies = [
+    # Core Agent Orchestration
+    "langchain-core>=1.4.0",
+    "langgraph>=1.2.4",
+    "langchain-ollama>=1.1.0",
+    "langchain-community",
+
+    # Data Structures & Environment
+    "pydantic>=2.13.4",
+    "python-dotenv>=1.2.2",
+    "PyYAML>=6.0.3",
+
+    # Shared API & Serving
+    "fastapi>=0.136.3",
+    "uvicorn[standard]>=0.49.0",
+    "httpx>=0.28.1",
+
+    # Data Processing
+    "polars>=1.41.2",
+    "pandas>=3.0.3",
+    "numpy>=2.4.6",
+
+    # ML & Science
+    "scikit-learn>=1.9.0",
+    "scipy>=1.17.1",
+    "torch>=2.12.0",
+    "transformers>=5.10.1",
+
+    # Finance & Economy
+    "ccxt>=4.5.56",
+
+    # NLP & Scraping
+    "beautifulsoup4>=4.14.3",
+    "selenium>=4.44.0",
+    "playwright>=1.57.0",
+    "nltk>=3.9.4",
+
+    # Desktop UI & Automation
+    "PySide6>=6.11.1",
+    "markdown>=3.10.2",
+    "pyautogui>=0.9.54",
+    "Pillow>=12.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "pytest-asyncio>=1.4.0",
+    "black>=26.5.1",
+    "ruff>=0.15.15",
+    "pre-commit>=4.0.0",
+    "mypy>=2.1.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["agents*", "shared*", "api*"]
+
+# ==========================================
+# Black — Code Formatter
+# ==========================================
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+
+# ==========================================
+# Pytest — Testing
+# ==========================================
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+asyncio_mode = "auto"
+
+# ==========================================
+# MyPy — Type Checking
+# ==========================================
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+# ==========================================
+# Coverage
+# ==========================================
+[tool.coverage.run]
+source = ["agents", "shared", "api"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+fail_under = 70
+show_missing = true

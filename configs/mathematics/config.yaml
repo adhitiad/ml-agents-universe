@@ -1,0 +1,28 @@
+# ==========================================
+# Mathematics Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "Mathematics Agent"
+  description: "Mathematical problem solving dan theorem proving"
+  version: "0.1.0"
+
+# --- Solver Settings ---
+solver:
+  max_iterations: 10000
+  precision: 1e-10
+  timeout_seconds: 60
+
+# --- Domains ---
+domains:
+  - algebra
+  - calculus
+  - geometry
+  - number_theory
+  - statistics
+
+# --- Data ---
+data:
+  theorems_path: "./data/raw/mathematics/theorems"
+  schema: "./data/schemas/mathematics/theorems.yaml"

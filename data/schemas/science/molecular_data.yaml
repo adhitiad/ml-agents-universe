@@ -1,0 +1,18 @@
+name: molecular_data
+version: 1.0.0
+domain: science
+columns:
+- name: molecule_id
+  type: string
+  nullable: false
+- name: smiles
+  type: string
+  nullable: false
+- name: weight
+  type: float
+  nullable: true
+  constraints:
+    min: 0
+- name: timestamp
+  type: datetime
+  nullable: true

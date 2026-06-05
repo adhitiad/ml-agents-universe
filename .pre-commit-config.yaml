@@ -1,0 +1,53 @@
+# ==========================================
+# Pre-commit Hooks — ML Agents Universe
+# ==========================================
+# Install: pre-commit install
+# Run: pre-commit run --all-files
+
+repos:
+  # --- Standard Hooks ---
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        name: Hapus trailing whitespace
+      - id: end-of-file-fixer
+        name: Fix end-of-file
+      - id: check-yaml
+        name: Validasi YAML
+      - id: check-toml
+        name: Validasi TOML
+      - id: check-added-large-files
+        name: Cek file besar (>500KB)
+        args: ['--maxkb=500']
+      - id: check-merge-conflict
+        name: Cek merge conflict markers
+      - id: debug-statements
+        name: Cek debug statements (pdb, breakpoint)
+
+  # --- Ruff (Linting + Formatting) ---
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.15
+    hooks:
+      - id: ruff
+        name: Ruff linter
+        args: [--fix]
+      - id: ruff-format
+        name: Ruff formatter
+
+  # --- Black (Code Formatter) ---
+  - repo: https://github.com/psf/black
+    rev: 26.5.1
+    hooks:
+      - id: black
+        name: Black formatter
+        language_version: python3.11
+
+  # --- Security ---
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        name: Deteksi secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: '\.env\.example$'

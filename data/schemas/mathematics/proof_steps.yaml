@@ -1,0 +1,8 @@
+﻿# Schema: proof_steps.yaml
+# Domain: mathematics
+# Version: 0.1.0
+
+table: mathematics.proof_steps
+version: "0.1.0"
+description: "Schema for proof_steps.yaml in mathematics domain"
+columns: []

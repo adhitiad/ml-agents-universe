@@ -1,0 +1,5 @@
+assessment:
+  irt_model: "2PL"
+  guessing_factor_enabled: false
+  target_passing_score: 0.7
+  adaptive: true

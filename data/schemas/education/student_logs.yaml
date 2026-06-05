@@ -1,0 +1,19 @@
+name: student_logs
+version: 1.0.0
+domain: education
+columns:
+- name: student_id
+  type: string
+  nullable: false
+- name: action
+  type: string
+  nullable: false
+- name: score
+  type: float
+  nullable: true
+  constraints:
+    min: 0
+    max: 100
+- name: timestamp
+  type: datetime
+  nullable: false

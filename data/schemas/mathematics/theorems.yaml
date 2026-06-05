@@ -1,0 +1,8 @@
+﻿# Schema: theorems.yaml
+# Domain: mathematics
+# Version: 0.1.0
+
+table: mathematics.theorems
+version: "0.1.0"
+description: "Schema for theorems.yaml in mathematics domain"
+columns: []

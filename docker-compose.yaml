@@ -1,0 +1,213 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/api_gateway.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+    networks:
+      - universe-net
+    depends_on:
+      - agent-nlp
+      - agent-finance
+      - agent-economy
+      - agent-education
+      - agent-entertainment
+      - agent-mathematics
+      - agent-science
+      - agent-healthcare
+      - agent-legal
+      - agent-cybersecurity
+      - agent-creative
+      - agent-devops
+      - agent-data_engineering
+      - agent-osint
+      - agent-game_ai
+      - agent-productivity
+
+  agent-nlp:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: nlp
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-finance:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: finance
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-economy:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: economy
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-education:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: education
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-entertainment:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: entertainment
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-mathematics:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: mathematics
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-science:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: science
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-healthcare:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: healthcare
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-legal:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: legal
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-cybersecurity:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: cybersecurity
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-creative:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: creative
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-devops:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: devops
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-data_engineering:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: data_engineering
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-osint:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: osint
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-game_ai:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: game_ai
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+  agent-productivity:
+    build:
+      context: .
+      dockerfile: deployment/dockerfiles/agent.Dockerfile
+      args:
+        DOMAIN_NAME: productivity
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - universe-net
+
+networks:
+  universe-net:
+    driver: bridge
+
+volumes:
+  shared-data:

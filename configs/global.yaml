@@ -1,0 +1,68 @@
+# ==========================================
+# ML Agents Universe — Global Configuration
+# ==========================================
+# Version: 0.1.0
+# Semua domain agents membaca config ini sebagai base.
+
+# --- Application ---
+app:
+  name: "ML Agents Universe"
+  version: "0.1.0"
+  environment: "development"  # development | staging | production
+
+# --- Logging ---
+logging:
+  level: "INFO"  # DEBUG | INFO | WARNING | ERROR | CRITICAL
+  format: "structured"  # structured | simple
+  output: "console"  # console | file | both
+  file_path: "./logs/app.log"
+  scrub_pii: true  # Wajib: scrub PII dari log entries
+
+# --- Data Lake ---
+data_lake:
+  base_path: "./data"
+  raw_path: "./data/raw"
+  processed_path: "./data/processed"
+  schemas_path: "./data/schemas"
+  min_quality_score: 0.8  # Minimum data quality score
+
+# --- LLM ---
+llm:
+  provider: "ollama"
+  base_url: "${OLLAMA_BASE_URL}"
+  model_name: "${OLLAMA_MODEL_NAME}"
+  temperature: 0.0
+  max_tokens: 4096
+
+# --- API Server ---
+api:
+  host: "${FASTAPI_HOST}"
+  port: "${FASTAPI_PORT}"
+  cors_origins: "${CORS_ORIGINS}"
+  debug: false
+
+# --- Agent Defaults ---
+agent_defaults:
+  max_retries: 3
+  timeout_seconds: 30
+  health_check_interval: 60
+  fallback_agent: "nlp"
+
+# --- Domains ---
+domains:
+  - nlp
+  - finance
+  - economy
+  - education
+  - entertainment
+  - mathematics
+  - science
+  - healthcare
+  - legal
+  - cybersecurity
+  - creative
+  - devops
+  - data_engineering
+  - osint
+  - game_ai
+  - productivity

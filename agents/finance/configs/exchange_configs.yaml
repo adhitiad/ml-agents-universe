@@ -1,0 +1,6 @@
+paper_trading: true
+mock_exchange:
+  name: "MockBinance"
+  base_currency: "USD"
+  trading_fee: 0.001
+  rate_limit_ms: 100

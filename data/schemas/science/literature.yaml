@@ -1,0 +1,8 @@
+﻿# Schema: literature.yaml
+# Domain: science
+# Version: 0.1.0
+
+table: science.literature
+version: "0.1.0"
+description: "Schema for literature.yaml in science domain"
+columns: []

@@ -1,0 +1,8 @@
+﻿# Schema: events.yaml
+# Domain: entertainment
+# Version: 0.1.0
+
+table: entertainment.events
+version: "0.1.0"
+description: "Schema for events.yaml in entertainment domain"
+columns: []

@@ -1,0 +1,8 @@
+﻿# Schema: transactions.yaml
+# Domain: economy
+# Version: 0.1.0
+
+table: economy.transactions
+version: "0.1.0"
+description: "Schema for transactions.yaml in economy domain"
+columns: []

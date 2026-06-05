@@ -1,0 +1,28 @@
+# ==========================================
+# Science Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "Science Agent"
+  description: "Scientific discovery, experiments, dan literature analysis"
+  version: "0.1.0"
+
+# --- Experiment Settings ---
+experiments:
+  output_path: "./agents/science/experiments"
+  reproducibility_seed: 42
+  max_parallel: 4
+
+# --- Research Areas ---
+research_areas:
+  - chemistry
+  - physics
+  - biology
+  - materials_science
+
+# --- Data ---
+data:
+  molecules_path: "./data/raw/science/molecules"
+  literature_path: "./data/raw/science/literature"
+  schema: "./data/schemas/science/molecules.yaml"

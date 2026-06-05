@@ -1,0 +1,28 @@
+{{- range .Values.agents.domains }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-agent-{{ .name }}
+  labels:
+    app: agent-{{ .name }}
+spec:
+  replicas: {{ $.Values.agents.replicaCount }}
+  selector:
+    matchLabels:
+      app: agent-{{ .name }}
+  template:
+    metadata:
+      labels:
+        app: agent-{{ .name }}
+    spec:
+      containers:
+        - name: agent-{{ .name }}
+          image: "{{ $.Values.global.repository }}/agent-{{ .name }}:{{ $.Values.agents.tag }}"
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          env:
+            - name: AGENT_DOMAIN
+              value: "{{ .name }}"
+          resources:
+{{ toYaml $.Values.resources | indent 12 }}
+---
+{{- end }}

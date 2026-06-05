@@ -1,0 +1,28 @@
+# ==========================================
+# Economy Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "Economy Agent"
+  description: "Economic simulation dan macro analysis"
+  version: "0.1.0"
+
+# --- Simulation ---
+simulation:
+  num_agents: 100
+  time_steps: 1000
+  output_path: "./agents/economy/outputs"
+
+# --- Indicators ---
+indicators:
+  - gdp
+  - inflation
+  - unemployment
+  - interest_rate
+  - trade_balance
+
+# --- Data ---
+data:
+  macro_data_path: "./data/raw/economy/macro"
+  schema: "./data/schemas/economy/macro_indicators.yaml"

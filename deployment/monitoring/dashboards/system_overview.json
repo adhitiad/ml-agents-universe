@@ -1,0 +1,25 @@
+{
+  "title": "ML Agents Universe - System Health",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Agent Error Rates",
+      "targets": [
+        {
+          "expr": "rate(error_rate_total[5m])",
+          "legendFormat": "{{domain}} - {{error_type}}"
+        }
+      ]
+    },
+    {
+      "type": "gauge",
+      "title": "Data Quality Score",
+      "targets": [
+        {
+          "expr": "data_quality_score",
+          "legendFormat": "{{domain}}"
+        }
+      ]
+    }
+  ]
+}

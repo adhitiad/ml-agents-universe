@@ -1,0 +1,10 @@
+nlp_model:
+  name: "llama-3-8b-instruct"
+  temperature: 0.2
+  max_tokens: 2048
+  fallback_model: "gemma-7b"
+  
+embedding_model:
+  name: "all-MiniLM-L6-v2"
+  chunk_size: 512
+  chunk_overlap: 50

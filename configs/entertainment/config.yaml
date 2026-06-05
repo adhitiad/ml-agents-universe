@@ -1,0 +1,27 @@
+# ==========================================
+# Entertainment Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "Entertainment Agent"
+  description: "Content recommendation dan entertainment AI"
+  version: "0.1.0"
+
+# --- Recommendation Engine ---
+recommendation:
+  algorithm: "collaborative_filtering"
+  num_recommendations: 10
+  diversity_factor: 0.3
+
+# --- Content Types ---
+content_types:
+  - movies
+  - music
+  - games
+  - books
+
+# --- Data ---
+data:
+  users_path: "./data/raw/entertainment/users"
+  schema: "./data/schemas/entertainment/users.yaml"

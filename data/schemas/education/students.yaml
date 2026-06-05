@@ -1,0 +1,8 @@
+﻿# Schema: students.yaml
+# Domain: education
+# Version: 0.1.0
+
+table: education.students
+version: "0.1.0"
+description: "Schema for students.yaml in education domain"
+columns: []

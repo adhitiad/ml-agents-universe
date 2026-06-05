@@ -1,0 +1,17 @@
+scenarios:
+  boom:
+    description: "Ekspansi ekonomi tinggi."
+    gdp_growth_target: 0.05
+    inflation_rate_target: 0.04
+    duration_ticks: 20
+    
+  recession:
+    description: "Kontraksi ekonomi."
+    gdp_growth_target: -0.02
+    inflation_rate_target: -0.01
+    duration_ticks: 15
+
+  policy_shock:
+    description: "Kenaikan mendadak suku bunga."
+    interest_rate_hike: 0.03
+    duration_ticks: 10

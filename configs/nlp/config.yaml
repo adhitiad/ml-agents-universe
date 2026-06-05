@@ -1,0 +1,30 @@
+# ==========================================
+# NLP Agent — Configuration
+# ==========================================
+# Version: 0.1.0
+
+agent:
+  name: "NLP Agent"
+  description: "Natural Language Processing dan conversational AI"
+  version: "0.1.0"
+
+# --- Model Settings ---
+model:
+  tokenizer: "bert-base-multilingual-cased"
+  max_sequence_length: 512
+  batch_size: 32
+
+# --- NLP Pipeline ---
+pipeline:
+  tasks:
+    - text_classification
+    - named_entity_recognition
+    - sentiment_analysis
+    - question_answering
+    - summarization
+
+# --- Data ---
+data:
+  knowledge_base_path: "./data/raw/nlp/knowledge_base"
+  conversations_path: "./data/raw/nlp/conversations"
+  schema: "./data/schemas/nlp/conversations.yaml"

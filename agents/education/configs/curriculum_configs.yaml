@@ -1,0 +1,7 @@
+curriculum:
+  math:
+    prerequisites: []
+  calculus:
+    prerequisites: ["math"]
+  physics:
+    prerequisites: ["calculus"]

@@ -1,0 +1,8 @@
+﻿# Schema: portfolio.yaml
+# Domain: finance
+# Version: 0.1.0
+
+table: finance.portfolio
+version: "0.1.0"
+description: "Schema for portfolio.yaml in finance domain"
+columns: []

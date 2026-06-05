@@ -1,0 +1,8 @@
+﻿# Schema: conversations.yaml
+# Domain: nlp
+# Version: 0.1.0
+
+table: nlp.conversations
+version: "0.1.0"
+description: "Schema for conversations.yaml in nlp domain"
+columns: []

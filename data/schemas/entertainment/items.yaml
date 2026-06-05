@@ -1,0 +1,8 @@
+﻿# Schema: items.yaml
+# Domain: entertainment
+# Version: 0.1.0
+
+table: entertainment.items
+version: "0.1.0"
+description: "Schema for items.yaml in entertainment domain"
+columns: []

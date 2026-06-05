@@ -1,0 +1,8 @@
+﻿# Schema: items.yaml
+# Domain: education
+# Version: 0.1.0
+
+table: education.items
+version: "0.1.0"
+description: "Schema for items.yaml in education domain"
+columns: []

@@ -1,0 +1,36 @@
+# Default values for ml-agents-universe
+
+global:
+  imagePullPolicy: IfNotPresent
+  repository: ghcr.io/ml-agents
+
+gateway:
+  replicaCount: 2
+  image: api-gateway
+  tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8000
+  ingress:
+    enabled: true
+    host: api.ml-agents.local
+
+agents:
+  replicaCount: 1
+  tag: "latest"
+  domains:
+    - name: nlp
+    - name: finance
+    - name: economy
+    - name: education
+    - name: entertainment
+    - name: mathematics
+    - name: science
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"

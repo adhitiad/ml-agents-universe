@@ -1,0 +1,8 @@
+﻿# Schema: users.yaml
+# Domain: entertainment
+# Version: 0.1.0
+
+table: entertainment.users
+version: "0.1.0"
+description: "Schema for users.yaml in entertainment domain"
+columns: []

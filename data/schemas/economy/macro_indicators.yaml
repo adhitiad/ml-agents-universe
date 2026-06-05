@@ -1,0 +1,16 @@
+name: macro_indicators
+version: 1.0.0
+domain: economy
+columns:
+- name: country
+  type: string
+  nullable: false
+- name: indicator
+  type: string
+  nullable: false
+- name: value
+  type: float
+  nullable: false
+- name: timestamp
+  type: datetime
+  nullable: false

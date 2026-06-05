@@ -1,0 +1,8 @@
+rebalancing:
+  frequency_hours: 24
+  tolerance_threshold: 0.05
+  
+risk_management:
+  max_var_95: 0.05
+  max_drawdown: 0.15
+  stop_loss_pct: 0.05

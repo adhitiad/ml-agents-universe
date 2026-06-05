@@ -1,0 +1,8 @@
+﻿# Schema: interactions.yaml
+# Domain: education
+# Version: 0.1.0
+
+table: education.interactions
+version: "0.1.0"
+description: "Schema for interactions.yaml in education domain"
+columns: []

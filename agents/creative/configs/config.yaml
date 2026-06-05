@@ -1,0 +1,3 @@
+# Konfigurasi spesifik untuk domain creative
+agent_name: 'creative_agent'
+version: '0.1.0'

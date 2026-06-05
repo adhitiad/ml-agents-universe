@@ -1,0 +1,82 @@
+# ==========================================
+# Ruff — Linter & Formatter untuk ML Agents Universe
+# ==========================================
+# Docs: https://docs.astral.sh/ruff/configuration/
+
+target-version = "py311"
+line-length = 88
+
+# Exclude directories yang tidak perlu di-lint
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "*.egg-info",
+    "dist",
+    "build",
+    "notebooks",
+    ".ruff_cache",
+    ".mypy_cache",
+    ".pytest_cache",
+    "data",
+    "models",
+]
+
+[lint]
+# Rules yang diaktifkan
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # isort (import sorting)
+    "UP",   # pyupgrade (modernize syntax)
+    "B",    # flake8-bugbear (common bugs)
+    "SIM",  # flake8-simplify
+    "D",    # pydocstyle (docstring conventions)
+    "N",    # pep8-naming
+    "S",    # flake8-bandit (security)
+    "T20",  # flake8-print (no print statements)
+    "RUF",  # ruff-specific rules
+]
+
+# Rules yang di-ignore
+ignore = [
+    "D100",   # Missing docstring in public module (untuk __init__.py)
+    "D104",   # Missing docstring in public package
+    "D107",   # Missing docstring in __init__
+    "D203",   # 1 blank line required before class docstring (conflict dengan D211)
+    "D213",   # Multi-line docstring summary on second line (conflict dengan D212)
+    "S101",   # Use of assert (diperlukan untuk testing)
+    "E501",   # Line too long (dihandle oleh formatter)
+]
+
+# Fixable rules
+fixable = ["ALL"]
+unfixable = []
+
+[lint.per-file-ignores]
+# Tests tidak perlu docstrings dan boleh pakai assert
+"**/tests/**/*.py" = ["D", "S101", "T20"]
+# Schemas dan Tools sering kali merupakan pydantic model deskriptif
+"**/schemas.py" = ["D"]
+"**/tools/**/*.py" = ["D"]
+# Komponen antarmuka pengguna (PySide6) sering kali sangat deskriptif (*self-explanatory*)
+"ui/**/*.py" = ["D", "N802"]
+# __init__.py boleh punya unused imports (re-exports)
+"**/__init__.py" = ["F401", "D"]
+# Scripts boleh pakai print
+"scripts/**/*.py" = ["T20"]
+# Router/API mockup boleh pakai print sementara
+"api/router.py" = ["T20"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.isort]
+known-first-party = ["agents", "shared", "api"]
+force-single-line = false
+lines-after-imports = 2
+
+[lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
