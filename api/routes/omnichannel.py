@@ -7,8 +7,8 @@ import polars as pl
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from langchain_core.messages import HumanMessage
 
-from api.router import UniverseState
-from api.router import app as orchestrator_app
+from api.orchestrator import UniverseState
+from api.orchestrator import app as orchestrator_app
 from shared.adapters.sender import sender
 from shared.data.schema import NormalizedMessage
 

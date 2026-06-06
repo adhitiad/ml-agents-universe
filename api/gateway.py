@@ -66,6 +66,30 @@ app.include_router(unified_chat_router)
 app.include_router(ws_chat_router)
 app.include_router(omnichannel_router)
 
+# Mount Domain Agent Routers secara dinamis
+import importlib
+from pathlib import Path
+
+agents_dir = Path("agents")
+if agents_dir.exists():
+    for agent_path in agents_dir.iterdir():
+        if agent_path.is_dir() and not agent_path.name.startswith("__"):
+            # Cek apakah ada api/router.py
+            router_file = agent_path / "api" / "router.py"
+            if router_file.exists():
+                try:
+                    module_name = f"agents.{agent_path.name}.api.router"
+                    module = importlib.import_module(module_name)
+                    if hasattr(module, "router"):
+                        app.include_router(
+                            module.router, 
+                            prefix=f"/agent/{agent_path.name}", 
+                            tags=[f"Agent: {agent_path.name.title()}"]
+                        )
+                        logger.info(f"Berhasil memuat router untuk agen: {agent_path.name}")
+                except Exception as e:
+                    logger.error(f"Gagal memuat router untuk agen {agent_path.name}: {e}")
+
 # Mount Prometheus metrics endpoint
 metrics_app = make_asgi_app()
 app.mount("/metrics", metrics_app)
