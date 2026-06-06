@@ -20,6 +20,7 @@ class SummaryMemory:
 
     def __init__(self, summarizer_func: Callable[[list[BaseMessage]], str]) -> None:
         """Args:
+
         summarizer_func: Fungsi (biasanya membungkus panggilan LLM)
                          yang mengambil daftar pesan dan mengembalikan string ringkasan.
         """

@@ -30,3 +30,19 @@ class LLMCredential(Base):
 
     def __repr__(self) -> str:
         return f"<LLMCredential(provider='{self.provider_name}', active={self.is_active})>"
+
+
+class ChatMessage(Base):
+    """Tabel untuk menyimpan histori obrolan per sesi (SQLiteMemory)."""
+
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String, index=True, nullable=False)
+    role = Column(String, nullable=False)  # 'user', 'ai', or 'system'
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f"<ChatMessage(session='{self.session_id}', role='{self.role}')>"
+
