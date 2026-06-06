@@ -13,7 +13,7 @@ from typing import Any
 
 import polars as pl
 import yaml
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from shared.models.base import ColumnType, DataSchema
 
@@ -127,3 +127,16 @@ class SchemaValidator:
         if constraints.get("unique", False):
             if series.n_unique() < series.len():
                 errors.append(f"Column '{col_name}' violated unique constraint.")
+
+
+class NormalizedMessage(BaseModel):
+    """Schema standar untuk pesan dari berbagai platform Omnichannel."""
+    
+    message_id: str = Field(..., description="ID unik pesan dari platform asal")
+    platform: str = Field(..., description="Nama platform: telegram, whatsapp, discord, dsb")
+    chat_id: str = Field(..., description="ID dari chat atau grup tempat pesan dikirim")
+    sender_id: str = Field(..., description="ID unik pengirim pesan")
+    content: str = Field(..., description="Teks atau isi pesan yang dikirim")
+    timestamp: str = Field(..., description="Waktu pesan dikirim dalam format ISO 8601")
+    metadata: dict[str, Any] = Field(default_factory=dict, description="Metadata ekstra (misal: reply_to_id, username, channel_name)")
+

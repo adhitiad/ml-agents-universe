@@ -1,82 +1,49 @@
-"""Finance Dataset: Bitcoin Hourly OHLCV (synthetic fallback).
-
-Mengunduh atau men-generate data OHLCV yang sesuai
-dengan schema `market_data.yaml`.
-"""
-
-from __future__ import annotations
-
-import logging
-import random
-from datetime import datetime, timedelta, timezone
+import os
 from pathlib import Path
-from typing import Any
-
 import polars as pl
-
-from shared.data.downloader import DatasetDownloader
+import logging
 
 logger = logging.getLogger(__name__)
 
+try:
+    from datasets import load_dataset
+except ImportError:
+    raise ImportError("Harap jalankan: pip install datasets pyarrow polars")
 
-def generate_synthetic_ohlcv(n_hours: int = 720) -> list[dict[str, Any]]:
-    """Generate synthetic Bitcoin OHLCV data (30 hari default).
+def download_finance_dataset(**kwargs) -> Path:
+    """Download HuggingFace dataset untuk domain finance."""
+    # Ambil Token HF dari environment (berguna untuk dataset private/gated)
+    hf_token = os.environ.get("HF_TOKEN")
 
-    Args:
-        n_hours: Jumlah jam data yang di-generate.
+    data_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data", "raw", "finance")))
+    data_dir.mkdir(parents=True, exist_ok=True)
 
-    Returns:
-        List of dict sesuai schema market_data.yaml.
-    """
-    records: list[dict[str, Any]] = []
-    base_price = 65000.0
-    base_time = datetime.now(timezone.utc) - timedelta(hours=n_hours)
+    output_path = data_dir / "finance_dataset.parquet"
 
-    for i in range(n_hours):
-        # Random walk sederhana untuk harga
-        change_pct = random.gauss(0, 0.005)  # noqa: S311
-        base_price *= 1 + change_pct
-        price = round(base_price, 2)
-        volume = round(random.uniform(100, 5000), 2)  # noqa: S311
+    force_clean = kwargs.get("force", False)
+    is_full = kwargs.get("full", False)
 
-        records.append(
-            {
-                "symbol": "BTC/USD",
-                "price": price,
-                "volume": volume,
-                "timestamp": base_time + timedelta(hours=i),
-            }
-        )
-    return records
+    if not output_path.exists() or force_clean:
+        logger.info(f"Mengunduh dataset zeroshot/twitter-financial-news-sentiment dari HuggingFace...")
 
+        # Mengunduh dataset tanpa trust_remote_code
+        ds = load_dataset("zeroshot/twitter-financial-news-sentiment", token=hf_token)
 
-def download_finance_dataset(
-    *,
-    n_hours: int = 720,
-    output_dir: Path | None = None,
-) -> Path:
-    """Download atau generate Finance dataset.
+        if hasattr(ds, "keys"):
+            split_name = "train" if "train" in ds.keys() else list(ds.keys())[0]
+            ds = ds[split_name]
 
-    Args:
-        n_hours: Jumlah jam untuk synthetic data.
-        output_dir: Direktori output. Default: data/raw/finance/.
+        if not is_full and len(ds) > 1000:
+            ds = ds.select(range(1000))
 
-    Returns:
-        Path ke file parquet output.
-    """
-    downloader = DatasetDownloader()
-    dest_dir = output_dir or downloader.domain_dir("finance")
-    output_path = dest_dir / "btc_ohlcv.parquet"
+        # OPTIMASI: Konversi via PyArrow agar 100% kompatibel dengan Polars DataFrame
+        # Menghindari error tipe data kompleks (nested json/list)
+        try:
+            df = pl.from_arrow(ds.data.table)
+            df.write_parquet(str(output_path))
+        except Exception as e:
+            logger.warning(f"Gagal konversi native arrow. Fallback ke Pandas: {e}")
+            df = pl.from_pandas(ds.to_pandas())
+            df.write_parquet(str(output_path))
 
-    if output_path.exists():
-        logger.info("Dataset Finance sudah ada: %s", output_path)
-        return output_path
-
-    # Gunakan synthetic data (Kaggle dataset butuh API key)
-    logger.info("Generating synthetic BTC/USD OHLCV data (%d jam)...", n_hours)
-    records = generate_synthetic_ohlcv(n_hours)
-
-    df = pl.DataFrame(records)
-    df.write_parquet(output_path)
-    logger.info("Finance dataset tersimpan: %s (%d baris)", output_path, df.height)
     return output_path

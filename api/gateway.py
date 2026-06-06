@@ -11,6 +11,7 @@ from slowapi.errors import RateLimitExceeded
 
 from api.limiter import limiter
 from api.routes.chat import router as unified_chat_router
+from api.routes.omnichannel import router as omnichannel_router
 from api.routes.ws_chat import router as ws_chat_router
 from shared.models.base import ErrorResponse
 from shared.monitoring.metrics import request_count
@@ -49,7 +50,7 @@ app = FastAPI(
 
 # Registrasi Limiter (Heat Optimization)
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
 # Konfigurasi CORS (Restrictive)
 app.add_middleware(
@@ -60,9 +61,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount Unified Chat Routers
+# Mount Unified Chat & Omnichannel Routers
 app.include_router(unified_chat_router)
 app.include_router(ws_chat_router)
+app.include_router(omnichannel_router)
 
 # Mount Prometheus metrics endpoint
 metrics_app = make_asgi_app()

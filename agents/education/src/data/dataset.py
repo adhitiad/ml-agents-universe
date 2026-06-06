@@ -1,141 +1,49 @@
-"""Education Dataset: Synthetic ASSISTments-style Knowledge Tracing.
-
-Men-generate data interaksi siswa yang realistis
-sesuai dengan schema `student_logs.yaml`.
-"""
-
-from __future__ import annotations
-
-import logging
-import random
-import uuid
-from datetime import datetime, timedelta, timezone
+import os
 from pathlib import Path
-from typing import Any
-
 import polars as pl
-
-from shared.data.downloader import DatasetDownloader
+import logging
 
 logger = logging.getLogger(__name__)
 
-# Skill/topic categories
-_SKILLS: list[str] = [
-    "addition",
-    "subtraction",
-    "multiplication",
-    "division",
-    "fractions",
-    "decimals",
-    "algebra_basic",
-    "geometry_area",
-    "geometry_perimeter",
-    "statistics_mean",
-]
+try:
+    from datasets import load_dataset
+except ImportError:
+    raise ImportError("Harap jalankan: pip install datasets pyarrow polars")
 
-# Action types
-_ACTIONS: list[str] = [
-    "attempt",
-    "hint_request",
-    "correct_answer",
-    "incorrect_answer",
-    "skip",
-]
+def download_education_dataset(**kwargs) -> Path:
+    """Download HuggingFace dataset untuk domain education."""
+    # Ambil Token HF dari environment (berguna untuk dataset private/gated)
+    hf_token = os.environ.get("HF_TOKEN")
 
+    data_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data", "raw", "education")))
+    data_dir.mkdir(parents=True, exist_ok=True)
 
-def generate_synthetic_education_data(
-    n_students: int = 50,
-    n_interactions_per_student: int = 20,
-) -> list[dict[str, Any]]:
-    """Generate synthetic student interaction data (ASSISTments-style).
+    output_path = data_dir / "education_dataset.parquet"
 
-    Mensimulasikan perilaku siswa yang beragam: ada yang
-    mahir (skor tinggi), ada yang masih belajar (banyak hint).
+    force_clean = kwargs.get("force", False)
+    is_full = kwargs.get("full", False)
 
-    Args:
-        n_students: Jumlah siswa unik.
-        n_interactions_per_student: Rata-rata interaksi per siswa.
+    if not output_path.exists() or force_clean:
+        logger.info(f"Mengunduh dataset NahedAbdelgaber/evaluating-student-writing dari HuggingFace...")
 
-    Returns:
-        List of dict sesuai schema student_logs.yaml.
-    """
-    records: list[dict[str, Any]] = []
-    base_time = datetime.now(timezone.utc) - timedelta(days=30)
+        # Mengunduh dataset tanpa trust_remote_code
+        ds = load_dataset("NahedAbdelgaber/evaluating-student-writing", token=hf_token)
 
-    for s in range(n_students):
-        student_id = f"STU_{uuid.uuid4().hex[:8].upper()}"
-        # Setiap siswa punya "kemampuan" acak
-        ability = random.gauss(0.65, 0.15)  # noqa: S311
-        ability = max(0.1, min(0.95, ability))
+        if hasattr(ds, "keys"):
+            split_name = "train" if "train" in ds.keys() else list(ds.keys())[0]
+            ds = ds[split_name]
 
-        n_interactions = random.randint(  # noqa: S311
-            n_interactions_per_student // 2,
-            n_interactions_per_student * 2,
-        )
+        if not is_full and len(ds) > 1000:
+            ds = ds.select(range(1000))
 
-        for i in range(n_interactions):
-            # Siswa dengan ability tinggi lebih sering correct
-            if random.random() < ability:  # noqa: S311
-                action = "correct_answer"
-                score = round(random.uniform(70, 100), 1)  # noqa: S311
-            elif random.random() < 0.3:  # noqa: S311
-                action = "hint_request"
-                score = round(random.uniform(30, 60), 1)  # noqa: S311
-            else:
-                action = random.choice(  # noqa: S311
-                    ["incorrect_answer", "attempt", "skip"]
-                )
-                score = round(random.uniform(0, 50), 1)  # noqa: S311
+        # OPTIMASI: Konversi via PyArrow agar 100% kompatibel dengan Polars DataFrame
+        # Menghindari error tipe data kompleks (nested json/list)
+        try:
+            df = pl.from_arrow(ds.data.table)
+            df.write_parquet(str(output_path))
+        except Exception as e:
+            logger.warning(f"Gagal konversi native arrow. Fallback ke Pandas: {e}")
+            df = pl.from_pandas(ds.to_pandas())
+            df.write_parquet(str(output_path))
 
-            timestamp = base_time + timedelta(
-                hours=random.randint(0, 720),  # noqa: S311
-                minutes=random.randint(0, 59),  # noqa: S311
-            )
-
-            records.append(
-                {
-                    "student_id": student_id,
-                    "action": action,
-                    "score": score,
-                    "timestamp": timestamp,
-                }
-            )
-
-    return records
-
-
-def download_education_dataset(
-    *,
-    n_students: int = 50,
-    n_interactions: int = 20,
-    output_dir: Path | None = None,
-) -> Path:
-    """Generate Education dataset.
-
-    Args:
-        n_students: Jumlah siswa unik.
-        n_interactions: Rata-rata interaksi per siswa.
-        output_dir: Direktori output. Default: data/raw/education/.
-
-    Returns:
-        Path ke file parquet output.
-    """
-    downloader = DatasetDownloader()
-    dest_dir = output_dir or downloader.domain_dir("education")
-    output_path = dest_dir / "student_interactions.parquet"
-
-    if output_path.exists():
-        logger.info("Dataset Education sudah ada: %s", output_path)
-        return output_path
-
-    logger.info(
-        "Generating synthetic education data (%d siswa, ~%d interaksi/siswa)...",
-        n_students,
-        n_interactions,
-    )
-    records = generate_synthetic_education_data(n_students, n_interactions)
-
-    df = pl.DataFrame(records)
-    df.write_parquet(output_path)
-    logger.info("Education dataset tersimpan: %s (%d baris)", output_path, df.height)
     return output_path

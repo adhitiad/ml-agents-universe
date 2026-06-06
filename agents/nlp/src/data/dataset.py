@@ -1,148 +1,49 @@
-"""NLP Dataset: WhatsApp Intent (synthetic fallback).
-
-Mengunduh atau men-generate dataset intent classification
-yang sesuai dengan schema `corpus.yaml`.
-"""
-
-from __future__ import annotations
-
-import logging
-import uuid
-from datetime import datetime, timezone
+import os
 from pathlib import Path
-from typing import Any
-
 import polars as pl
-
-from shared.data.downloader import DatasetDownloader
+import logging
 
 logger = logging.getLogger(__name__)
 
-# Kategori intent untuk synthetic data
-_INTENT_CATEGORIES: list[str] = [
-    "greeting",
-    "complaint",
-    "payment_issue",
-    "product_inquiry",
-    "farewell",
-]
+try:
+    from datasets import load_dataset
+except ImportError:
+    raise ImportError("Harap jalankan: pip install datasets pyarrow polars")
 
-_SYNTHETIC_TEMPLATES: dict[str, list[str]] = {
-    "greeting": [
-        "Halo, selamat pagi!",
-        "Hi, ada yang bisa dibantu?",
-        "Assalamualaikum, saya mau tanya.",
-        "Selamat siang, saya pelanggan baru.",
-        "Hey, apa kabar?",
-    ],
-    "complaint": [
-        "Produk saya rusak, tolong bantu.",
-        "Saya sangat kecewa dengan pelayanan ini.",
-        "Pengiriman terlambat 3 hari, tidak bisa diterima.",
-        "Kualitas barang tidak sesuai deskripsi.",
-        "Customer service tidak responsif sama sekali.",
-    ],
-    "payment_issue": [
-        "Pembayaran saya gagal, kenapa ya?",
-        "Saldo sudah terpotong tapi pesanan belum masuk.",
-        "Bagaimana cara refund?",
-        "Metode pembayaran apa saja yang tersedia?",
-        "Transfer sudah berhasil tapi status masih pending.",
-    ],
-    "product_inquiry": [
-        "Apakah produk ini tersedia dalam warna merah?",
-        "Berapa harga untuk paket premium?",
-        "Ada diskon untuk pembelian grosir?",
-        "Kapan stok akan tersedia kembali?",
-        "Spesifikasi laptop ini apa saja?",
-    ],
-    "farewell": [
-        "Terima kasih banyak atas bantuannya!",
-        "Oke, sudah jelas. Sampai jumpa!",
-        "Baik, saya akan coba dulu. Bye!",
-        "Makasih ya, sangat membantu.",
-        "Selesai, terima kasih. Wassalam.",
-    ],
-}
+def download_nlp_dataset(**kwargs) -> Path:
+    """Download HuggingFace dataset untuk domain nlp."""
+    # Ambil Token HF dari environment (berguna untuk dataset private/gated)
+    hf_token = os.environ.get("HF_TOKEN")
 
+    data_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data", "raw", "nlp")))
+    data_dir.mkdir(parents=True, exist_ok=True)
 
-def generate_synthetic_nlp_data(n_samples: int = 500) -> list[dict[str, Any]]:
-    """Generate synthetic intent classification data.
+    output_path = data_dir / "nlp_dataset.parquet"
 
-    Args:
-        n_samples: Jumlah sampel yang di-generate.
+    force_clean = kwargs.get("force", False)
+    is_full = kwargs.get("full", False)
 
-    Returns:
-        List of dict sesuai schema corpus.yaml.
-    """
-    import random
+    if not output_path.exists() or force_clean:
+        logger.info(f"Mengunduh dataset bitext/Bitext-customer-support-llm-chatbot-training-dataset dari HuggingFace...")
 
-    records: list[dict[str, Any]] = []
-    for i in range(n_samples):
-        intent = random.choice(_INTENT_CATEGORIES)  # noqa: S311
-        text = random.choice(_SYNTHETIC_TEMPLATES[intent])  # noqa: S311
-        # Tambahkan variasi kecil
-        variation = f" [{intent.upper()}#{i}]"
-        records.append(
-            {
-                "id": str(uuid.uuid4()),
-                "text": text + variation,
-                "source": f"synthetic_whatsapp_{intent}",
-                "timestamp": datetime.now(timezone.utc),
-            }
-        )
-    return records
+        # Mengunduh dataset tanpa trust_remote_code
+        ds = load_dataset("bitext/Bitext-customer-support-llm-chatbot-training-dataset", token=hf_token)
 
+        if hasattr(ds, "keys"):
+            split_name = "train" if "train" in ds.keys() else list(ds.keys())[0]
+            ds = ds[split_name]
 
-def download_nlp_dataset(
-    *,
-    n_samples: int = 500,
-    use_huggingface: bool = False,
-    output_dir: Path | None = None,
-) -> Path:
-    """Download atau generate NLP dataset.
+        if not is_full and len(ds) > 1000:
+            ds = ds.select(range(1000))
 
-    Args:
-        n_samples: Jumlah sampel untuk synthetic data.
-        use_huggingface: Jika True, coba download dari HuggingFace.
-        output_dir: Direktori output. Default: data/raw/nlp/.
-
-    Returns:
-        Path ke file parquet output.
-    """
-    downloader = DatasetDownloader()
-    dest_dir = output_dir or downloader.domain_dir("nlp")
-    output_path = dest_dir / "whatsapp_intent.parquet"
-
-    if output_path.exists():
-        logger.info("Dataset NLP sudah ada: %s", output_path)
-        return output_path
-
-    if use_huggingface:
+        # OPTIMASI: Konversi via PyArrow agar 100% kompatibel dengan Polars DataFrame
+        # Menghindari error tipe data kompleks (nested json/list)
         try:
-            records = downloader.download_huggingface(
-                "claritylab/utcd",
-                dest_dir / ".hf_cache",
-                split="train",
-                max_samples=n_samples,
-            )
-            # Konversi ke schema corpus.yaml
-            converted = [
-                {
-                    "id": str(uuid.uuid4()),
-                    "text": str(r.get("text", "")),
-                    "source": "huggingface_utcd",
-                    "timestamp": datetime.now(timezone.utc),
-                }
-                for r in records
-            ]
-        except Exception:
-            logger.warning("HuggingFace download gagal, fallback ke synthetic.")
-            converted = generate_synthetic_nlp_data(n_samples)
-    else:
-        converted = generate_synthetic_nlp_data(n_samples)
+            df = pl.from_arrow(ds.data.table)
+            df.write_parquet(str(output_path))
+        except Exception as e:
+            logger.warning(f"Gagal konversi native arrow. Fallback ke Pandas: {e}")
+            df = pl.from_pandas(ds.to_pandas())
+            df.write_parquet(str(output_path))
 
-    df = pl.DataFrame(converted)
-    df.write_parquet(output_path)
-    logger.info("NLP dataset tersimpan: %s (%d baris)", output_path, df.height)
     return output_path

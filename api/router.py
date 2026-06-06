@@ -267,7 +267,7 @@ if __name__ == "__main__":
             break
 
         # Masukkan input pengguna ke dalam state
-        initial_state = {"messages": [HumanMessage(content=user_input)]}
+        initial_state = UniverseState(messages=[HumanMessage(content=user_input)])
 
         # Jalankan LangGraph
         result = app.invoke(initial_state)
